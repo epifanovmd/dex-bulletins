@@ -1,0 +1,37 @@
+tbody tr {
+  cursor: pointer;
+  background: #ffffff;
+}
+tbody tr:hover {
+  border-radius: 20px;
+  background: #5205ce; /* Цвет фона под ссылкой */
+  color: #ffffff; /* Цвет ссылки */
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0 20px;
+}
+.isHover {
+  border-radius: 20px;
+  background: #5205ce; /* Цвет фона под ссылкой */
+  color: #ffffff; /* Цвет ссылки */
+}
+
+.shadow-tr {
+  -webkit-box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+}
+td:first-child {
+  border-radius: 20px 0 0 20px;
+}
+
+td:last-child {
+  border-radius: 0 30px 30px 0;
+}
+
+textarea.form-control {
+  height: 150px;
+}
