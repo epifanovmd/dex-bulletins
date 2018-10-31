@@ -41,20 +41,16 @@ class UpdateBulletin extends React.Component<
   private bulletinRating: any = React.createRef();
 
   public render() {
-    console.log(this.props.bulletinForUpdate);
-    console.log("bulletinNumber", this.bulletinNumber);
-    console.log("bulletinDate", this.bulletinDate);
-
-    // const getUserNameById = (id: string): string => {
-    //   let data: string = "";
-    //   this.props.users.forEach((user: IUserType) => {
-    //     if (user.id === id) {
-    //       data = user.name;
-    //       return;
-    //     }
-    //   });
-    //   return data;
-    // };
+    const getUserNameById = (id: string): string => {
+      let data: string = "";
+      this.props.users.forEach((user: IUserType) => {
+        if (user.id === id) {
+          data = user.name;
+          return;
+        }
+      });
+      return data;
+    };
 
     // if (this.props.bulletinForUpdate !== null) {
     //   this.bulletinNumber.current.value = this.props.bulletinForUpdate.number;
@@ -108,6 +104,7 @@ class UpdateBulletin extends React.Component<
       }
       this.props.history.push("/");
     };
+    console.log(this.props.bulletinForUpdate);
 
     return (
       <div>
@@ -144,6 +141,11 @@ class UpdateBulletin extends React.Component<
                 <input
                   required={true}
                   // type="text"
+                  value={
+                    this.props.bulletinForUpdate !== null
+                      ? this.props.bulletinForUpdate.updatedUtc.split("T")[0]
+                      : ""
+                  }
                   type="date"
                   ref={this.bulletinDate}
                 />
@@ -153,7 +155,15 @@ class UpdateBulletin extends React.Component<
                 <div className="input-group-prepend">
                   <label className="input-group-text">Пользователь</label>
                 </div>
-                <select ref={this.bulletinAuthor} className="custom-select">
+                <select
+                  ref={this.bulletinAuthor}
+                  value={
+                    this.props.bulletinForUpdate !== null
+                      ? getUserNameById(this.props.bulletinForUpdate.userId)
+                      : ""
+                  }
+                  className="custom-select"
+                >
                   {this.props.users.map((user: IUserType) => (
                     <option key={user.id}>{user.name}</option>
                   ))}
@@ -169,6 +179,11 @@ class UpdateBulletin extends React.Component<
                   className="form-control"
                   aria-label="With textarea"
                   ref={this.bulletinText}
+                  value={
+                    this.props.bulletinForUpdate !== null
+                      ? this.props.bulletinForUpdate.content
+                      : ""
+                  }
                 />
               </div>
               <p />
@@ -189,6 +204,11 @@ class UpdateBulletin extends React.Component<
                   min="1"
                   max="10"
                   ref={this.bulletinRating}
+                  value={
+                    this.props.bulletinForUpdate !== null
+                      ? this.props.bulletinForUpdate.rating
+                      : ""
+                  }
                   className="form-control"
                   aria-label="Sizing example input"
                   aria-describedby="inputGroup-sizing-default"
