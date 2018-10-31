@@ -50,10 +50,6 @@ interface IUserType {
 
 class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
   public render() {
-    if (this.props.bulletinIdForUpdate !== null) {
-      this.props.onClearBulletinIdForUpdate();
-    }
-
     if (this.props.users.length === 0) {
       this.props.onFetchBulletin();
     }
