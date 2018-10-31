@@ -174,7 +174,7 @@ export default connect(
   dispatch => ({
     onFetchUsers: (): void => {
       dispatch(fetchUsers());
-      dispatch(fetchBulletin(1,100));
+      dispatch(fetchBulletin(1, 100));
     },
     onAddBulletin: (bulletin: IBulletinType): void => {
       dispatch(addBulletinAction(bulletin));

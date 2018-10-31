@@ -40,7 +40,10 @@ class UpdateBulletin extends React.Component<
   private bulletinText: any = React.createRef();
   private bulletinRating: any = React.createRef();
 
-  public render() {
+  public componentDidMount() {
+    if (this.props.bulletinForUpdate === null) {
+      this.props.history.push("/");
+    }
     const getUserNameById = (id: string): string => {
       let data: string = "";
       this.props.users.forEach((user: IUserType) => {
@@ -51,19 +54,23 @@ class UpdateBulletin extends React.Component<
       });
       return data;
     };
+    if (
+      this.props.bulletinForUpdate !== null &&
+      this.bulletinNumber.current !== null
+    ) {
+      this.bulletinNumber.current.value = this.props.bulletinForUpdate.number;
+      this.bulletinDate.current.value = this.props.bulletinForUpdate.updatedUtc.split(
+        "T"
+      )[0];
+      this.bulletinAuthor.current.value = getUserNameById(
+        this.props.bulletinForUpdate.userId
+      );
+      this.bulletinText.current.value = this.props.bulletinForUpdate.content;
+      this.bulletinRating.current.value = this.props.bulletinForUpdate.rating;
+    }
+  }
 
-    // if (this.props.bulletinForUpdate !== null) {
-    //   this.bulletinNumber.current.value = this.props.bulletinForUpdate.number;
-    //   this.bulletinDate.current.value = this.props.bulletinForUpdate.updatedUtc.split(
-    //     "T"
-    //   )[0];
-    //   this.bulletinAuthor.current.value = getUserNameById(
-    //     this.props.bulletinForUpdate.userId
-    //   );
-    //   this.bulletinText.current.value = this.props.bulletinForUpdate.content;
-    //   this.bulletinRating.current.value = this.props.bulletinForUpdate.rating;
-    // }
-
+  public render() {
     const updateBulletin = (e: any) => {
       e.preventDefault();
       const numberbulletin = this.bulletinNumber.current.value;
@@ -104,8 +111,6 @@ class UpdateBulletin extends React.Component<
       }
       this.props.history.push("/");
     };
-    console.log(this.props.bulletinForUpdate);
-
     return (
       <div>
         <div className=" d-flex justify-content-md-center">
@@ -122,11 +127,6 @@ class UpdateBulletin extends React.Component<
                   </span>
                 </div>
                 <input
-                  value={
-                    this.props.bulletinForUpdate !== null
-                      ? this.props.bulletinForUpdate.number
-                      : ""
-                  }
                   required={true}
                   ref={this.bulletinNumber}
                   type="number"
@@ -138,32 +138,14 @@ class UpdateBulletin extends React.Component<
 
               <div className="pb-3">
                 <label className="pr-2">Дата</label>
-                <input
-                  required={true}
-                  // type="text"
-                  value={
-                    this.props.bulletinForUpdate !== null
-                      ? this.props.bulletinForUpdate.updatedUtc.split("T")[0]
-                      : ""
-                  }
-                  type="date"
-                  ref={this.bulletinDate}
-                />
+                <input required={true} type="date" ref={this.bulletinDate} />
               </div>
 
               <div className="input-group mb-3">
                 <div className="input-group-prepend">
                   <label className="input-group-text">Пользователь</label>
                 </div>
-                <select
-                  ref={this.bulletinAuthor}
-                  value={
-                    this.props.bulletinForUpdate !== null
-                      ? getUserNameById(this.props.bulletinForUpdate.userId)
-                      : ""
-                  }
-                  className="custom-select"
-                >
+                <select ref={this.bulletinAuthor} className="custom-select">
                   {this.props.users.map((user: IUserType) => (
                     <option key={user.id}>{user.name}</option>
                   ))}
@@ -179,11 +161,6 @@ class UpdateBulletin extends React.Component<
                   className="form-control"
                   aria-label="With textarea"
                   ref={this.bulletinText}
-                  value={
-                    this.props.bulletinForUpdate !== null
-                      ? this.props.bulletinForUpdate.content
-                      : ""
-                  }
                 />
               </div>
               <p />
@@ -204,11 +181,6 @@ class UpdateBulletin extends React.Component<
                   min="1"
                   max="10"
                   ref={this.bulletinRating}
-                  value={
-                    this.props.bulletinForUpdate !== null
-                      ? this.props.bulletinForUpdate.rating
-                      : ""
-                  }
                   className="form-control"
                   aria-label="Sizing example input"
                   aria-describedby="inputGroup-sizing-default"
@@ -238,7 +210,7 @@ export default connect(
   dispatch => ({
     onUpdateBulletin: (bulletin: IBulletinType): void => {
       dispatch(updateBulletinAction(bulletin));
-      // dispatch({ type: "CLEAR_BULLETIN_FOR_UPDATE", bulletin });
+      dispatch({ type: "CLEAR_BULLETIN_FOR_UPDATE", bulletin });
     },
     onDeleteBulletin: (Id: string) => {
       dispatch(deleteBuleetinByIdAction(Id));

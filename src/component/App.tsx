@@ -7,8 +7,7 @@ import "./App.css";
 import Header from "./Header";
 import { fetchBulletin } from "../actions/fetchBulletinAction";
 import { fetchUsers } from "./../actions/fetchUsersAction";
-import { bulletinByFilterAction } from "./../actions/fetchBulletinByFilterAction";
-// import { bulletinByIdForUpdate } from "./../actions/fetchBulletinByIdAction";
+// import { bulletinByFilterAction } from "./../actions/fetchBulletinByFilterAction";
 
 interface IMapStateToProps {
   history?: any;
@@ -20,14 +19,12 @@ interface IMapStateToProps {
 }
 
 interface IMapDispatchToProps {
-  onClearBulletinIdForUpdate: () => void;
   onFetchBulletin: () => void;
   onBulletinByIdForUpdate: (id: any) => void;
   onAddBulletinIdForDelete: (id: string) => void;
   onDelBulletinIdForDelete: (id: string) => void;
   onClearBulletinIdForDelete: () => void;
   onBulletinDelete: (idArr: string[]) => void;
-  onGetByFilterSort: (json: any) => void;
   onSetSortParam: (json: any) => void;
 }
 
@@ -128,21 +125,12 @@ export default connect(
     bulletinIdForUpdate: state.bulletinIdForUpdate
   }),
   dispatch => ({
-    onClearBulletinIdForUpdate: (): void => {
-      dispatch({ type: "CLEAR_BULLETIN_FOR_UPDATE", payload: null });
-    },
     onFetchBulletin: (): void => {
       dispatch(fetchUsers());
       dispatch(fetchBulletin(1, 100));
     },
     onBulletinByIdForUpdate: (id: any): void => {
-      setTimeout(() => {
-        dispatch({ type: "BULLETIN_FOR_UPDATE", bulletin: id });
-      }, 0);
-    },
-
-    onGetByFilterSort: (json: any) => {
-      dispatch(bulletinByFilterAction(json));
+      dispatch({ type: "BULLETIN_FOR_UPDATE", bulletin: id });
     }
   })
 )(App);
