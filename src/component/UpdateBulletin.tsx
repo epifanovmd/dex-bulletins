@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { updateBulletinAction } from "./../actions/updateBulletinAction";
+import { deleteBuleetinByIdAction } from "./../actions/deleteBuleetinsByIdAction";
 
 interface IMapStateToProps {
   history?: any;
@@ -11,6 +12,7 @@ interface IMapStateToProps {
 
 interface IMapDispatchToProps {
   onUpdateBulletin: (bulletin: IBulletinType) => void;
+  onDeleteBulletin: (Id: string) => void;
 }
 interface IBulletinType {
   id?: string;
@@ -39,23 +41,22 @@ class UpdateBulletin extends React.Component<
   private bulletinRating: any = React.createRef();
 
   public render() {
+    const getUserNameById = (id: string): string => {
+      let data: string = "";
+      this.props.users.forEach((user: IUserType) => {
+        if (user.id === id) {
+          data = user.name;
+          return;
+        }
+      });
+      return data;
+    };
+
     if (this.props.bulletinForUpdate !== null) {
       this.bulletinNumber.current.value = this.props.bulletinForUpdate.number;
       this.bulletinDate.current.value = this.props.bulletinForUpdate.updatedUtc.split(
         "T"
       )[0];
-
-      const getUserNameById = (id: string): string => {
-        let data: string = "";
-        this.props.users.forEach((user: IUserType) => {
-          if (user.id === id) {
-            data = user.name;
-            return;
-          }
-        });
-        return data;
-      };
-
       this.bulletinAuthor.current.value = getUserNameById(
         this.props.bulletinForUpdate.userId
       );
@@ -93,6 +94,14 @@ class UpdateBulletin extends React.Component<
         rating: ratingbulletin
       };
       this.props.onUpdateBulletin(bulletin);
+      this.props.history.push("/");
+    };
+
+    const deleteBulletin = (e: any) => {
+      e.preventDefault();
+      if (this.props.bulletinForUpdate.id !== undefined) {
+        this.props.onDeleteBulletin(this.props.bulletinForUpdate.id);
+      }
       this.props.history.push("/");
     };
 
@@ -180,6 +189,12 @@ class UpdateBulletin extends React.Component<
                     aria-describedby="inputGroup-sizing-default"
                   />
                 </div>
+                <button
+                  className="btn btn-danger mr-2"
+                  onClick={deleteBulletin}
+                >
+                  Удалить
+                </button>
                 <button className="btn btn-primary" type="submit">
                   Сохранить
                 </button>
@@ -203,8 +218,10 @@ export default connect(
   dispatch => ({
     onUpdateBulletin: (bulletin: IBulletinType): void => {
       dispatch(updateBulletinAction(bulletin));
-      dispatch({ type: "CLEAR_BULLETIN_BY_ID_FOR_UPDATE", bulletin });
-      dispatch({ type: "CLEAR_BULLETIN_ID_FOR_UPDATE", bulletin });
+      dispatch({ type: "CLEAR_BULLETIN_FOR_UPDATE", bulletin });
+    },
+    onDeleteBulletin: (Id: string) => {
+      dispatch(deleteBuleetinByIdAction(Id));
     }
   })
 )(UpdateBulletin);

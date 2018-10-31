@@ -15,7 +15,7 @@ export const updateBulletinAction = (bulletin: any): any => (dispatch: any) => {
     if (response.ok) {
       console.log(response);
       // загрузить объявления
-      dispatch(fetchBulletin());
+      dispatch(fetchBulletin(1,100));
       Alert.success("Изменения сохранены", {
         effect: "slide"
       });

@@ -29,7 +29,7 @@ export const addBulletinAction = (bulletin: IBulletinType): any => (
       Alert.success("Объявление добавлено успешно", {
         effect: "genie"
       });
-      dispatch(fetchBulletin());
+      dispatch(fetchBulletin(1,100));
     } else {
       // throw new Error("Something went wrong ...");
       Alert.error("Объявление не добавлено, внутренняя ошибка", {
