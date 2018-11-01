@@ -3,7 +3,23 @@ import Alert from "react-s-alert";
 export const fetchBulletin = (page: number, pageSize: number): any => (
   dispatch: any
 ) => {
-  fetch(`http://ci2.dextechnology.com:8000/api/Bulletin/GetByPage/1/100`)
+
+  const json = {
+    
+      "pageFilter": {
+        "page": page,
+        "pageSize": pageSize
+      }
+    
+  }
+  fetch("http://ci2.dextechnology.com:8000/api/Bulletin/GetByFilters", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(json)
+  })
     .then(response => {
       if (response.ok) {
         return response.json();

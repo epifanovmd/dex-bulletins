@@ -1,7 +1,24 @@
 import Alert from "react-s-alert";
 import { fetchBulletin } from "./fetchBulletinAction";
 
-export const updateBulletinAction = (bulletin: any): any => (dispatch: any) => {
+interface IBulletinType {
+  id?: string;
+  createdUtc?: string;
+  created?: string;
+  updatedUtc?: string;
+  deletedUtc?: string;
+  number: number;
+  userId?: string;
+  user?: string;
+  content: string;
+  rating: number;
+}
+
+export const updateBulletinAction = (
+  bulletin: IBulletinType,
+  page: number,
+  pageSize: number
+): any => (dispatch: any) => {
   // обновление в API
   console.log("обновление в API --> ", bulletin);
   fetch("http://ci2.dextechnology.com:8000/api/Bulletin/Update", {
@@ -15,7 +32,7 @@ export const updateBulletinAction = (bulletin: any): any => (dispatch: any) => {
     if (response.ok) {
       console.log(response);
       // загрузить объявления
-      dispatch(fetchBulletin(1, 100));
+      dispatch(fetchBulletin(page, pageSize));
       Alert.success("Изменения сохранены", {
         effect: "slide"
       });

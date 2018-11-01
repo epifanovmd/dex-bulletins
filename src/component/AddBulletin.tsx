@@ -3,16 +3,21 @@ import { connect } from "react-redux";
 
 import { fetchUsers } from "./../actions/fetchUsersAction";
 import { addBulletinAction } from "../actions/addBulletinAction";
-import { fetchBulletin } from "./../actions/fetchBulletinAction";
+// import { fetchBulletin } from "./../actions/fetchBulletinAction";
 
 interface IMapStateToProps {
   history?: any;
   users: IUserType[];
+  pageBulletins: { page: number; pageSize: number };
 }
 
 interface IMapDispatchToProps {
   onFetchUsers: () => void;
-  onAddBulletin: (bulletin: IBulletinType) => void;
+  onAddBulletin: (
+    bulletin: IBulletinType,
+    page: number,
+    pageSize: number
+  ) => void;
   onBulletinByIdForUpdate: (id: string) => void;
   onAddBulletinIdForDelete: (id: string) => void;
   onDelBulletinIdForDelete: (id: string) => void;
@@ -76,7 +81,11 @@ class AddBulletin extends React.Component<
         rating: bulletinrating
       };
 
-      this.props.onAddBulletin(bulletin);
+      this.props.onAddBulletin(
+        bulletin,
+        this.props.pageBulletins.page,
+        this.props.pageBulletins.pageSize
+      );
       this.props.history.push("/");
     };
 
@@ -169,15 +178,20 @@ class AddBulletin extends React.Component<
 
 export default connect(
   (state: any) => ({
-    users: state.users
+    users: state.users,
+    pageBulletins: state.pageBulletins
   }),
   dispatch => ({
     onFetchUsers: (): void => {
       dispatch(fetchUsers());
-      dispatch(fetchBulletin(1, 100));
+      // dispatch(fetchBulletin(page, pageSize));
     },
-    onAddBulletin: (bulletin: IBulletinType): void => {
-      dispatch(addBulletinAction(bulletin));
+    onAddBulletin: (
+      bulletin: IBulletinType,
+      page: number,
+      pageSize: number
+    ): void => {
+      dispatch(addBulletinAction(bulletin, page, pageSize));
     }
   })
 )(AddBulletin);

@@ -17,6 +17,7 @@ import "./Header.css";
 import { bulletinByFilterAction } from "../actions/fetchBulletinByFilterAction";
 interface IStateProps {
   users: IUserType[];
+  pageBulletins: {page: number, pageSize: number}
 }
 
 interface IDispatchProps {
@@ -63,8 +64,8 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
     const getByFilter = () => {
       const json: IBulletinByFilter = {
         pageFilter: {
-          page: 1,
-          pageSize: 100
+          page: this.props.pageBulletins.page,
+          pageSize: this.props.pageBulletins.pageSize
         },
         userId:
           this.bulletinAuthor.current.value === "Все"
@@ -156,7 +157,8 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
 
 export default connect(
   (state: any) => ({
-    users: state.users
+    users: state.users, 
+    pageBulletins: state.pageBulletins
   }),
   dispatch => ({
     onGetByFilter: (json: IBulletinByFilter): void => {

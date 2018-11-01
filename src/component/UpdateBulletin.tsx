@@ -8,19 +8,26 @@ interface IMapStateToProps {
   bulletinForUpdate: IBulletinType;
   users: any;
   bulletinIdForUpdate: string;
+  pageBulletins: { page: number; pageSize: number };
 }
 
 interface IMapDispatchToProps {
-  onUpdateBulletin: (bulletin: IBulletinType) => void;
+  onUpdateBulletin: (
+    bulletin: IBulletinType,
+    page: number,
+    pageSize: number
+  ) => void;
   onDeleteBulletin: (Id: string) => void;
 }
 interface IBulletinType {
   id?: string;
-  createdUtc: string;
-  updatedUtc: string;
+  createdUtc?: string;
+  created?: string;
+  updatedUtc?: string;
   deletedUtc?: string;
   number: number;
-  userId: string;
+  userId?: string;
+  user?: string;
   content: string;
   rating: number;
 }
@@ -44,27 +51,17 @@ class UpdateBulletin extends React.Component<
     if (this.props.bulletinForUpdate === null) {
       this.props.history.push("/");
     }
-    const getUserNameById = (id: string): string => {
-      let data: string = "";
-      this.props.users.forEach((user: IUserType) => {
-        if (user.id === id) {
-          data = user.name;
-          return;
-        }
-      });
-      return data;
-    };
     if (
       this.props.bulletinForUpdate !== null &&
-      this.bulletinNumber.current !== null
+      this.bulletinNumber.current !== null &&
+      this.props.bulletinForUpdate.created !== undefined
     ) {
       this.bulletinNumber.current.value = this.props.bulletinForUpdate.number;
-      this.bulletinDate.current.value = this.props.bulletinForUpdate.updatedUtc.split(
+      this.bulletinDate.current.value = this.props.bulletinForUpdate.created.split(
         "T"
       )[0];
-      this.bulletinAuthor.current.value = getUserNameById(
-        this.props.bulletinForUpdate.userId
-      );
+      this.bulletinAuthor.current.value = this.props.bulletinForUpdate.user;
+
       this.bulletinText.current.value = this.props.bulletinForUpdate.content;
       this.bulletinRating.current.value = this.props.bulletinForUpdate.rating;
     }
@@ -100,7 +97,11 @@ class UpdateBulletin extends React.Component<
         content: contentbulletin,
         rating: ratingbulletin
       };
-      this.props.onUpdateBulletin(bulletin);
+      this.props.onUpdateBulletin(
+        bulletin,
+        this.props.pageBulletins.page,
+        this.props.pageBulletins.pageSize
+      );
       this.props.history.push("/");
     };
 
@@ -205,11 +206,16 @@ class UpdateBulletin extends React.Component<
 export default connect(
   (state: any) => ({
     bulletinForUpdate: state.bulletinForUpdate,
-    users: state.users
+    users: state.users,
+    pageBulletins: state.pageBulletins
   }),
   dispatch => ({
-    onUpdateBulletin: (bulletin: IBulletinType): void => {
-      dispatch(updateBulletinAction(bulletin));
+    onUpdateBulletin: (
+      bulletin: IBulletinType,
+      page: number,
+      pageSize: number
+    ): void => {
+      dispatch(updateBulletinAction(bulletin, page, pageSize));
       dispatch({ type: "CLEAR_BULLETIN_FOR_UPDATE", bulletin });
     },
     onDeleteBulletin: (Id: string) => {

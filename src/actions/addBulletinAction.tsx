@@ -12,9 +12,11 @@ interface IBulletinType {
   rating: number;
 }
 
-export const addBulletinAction = (bulletin: IBulletinType): any => (
-  dispatch: any
-) => {
+export const addBulletinAction = (
+  bulletin: IBulletinType,
+  page: number,
+  pageSize: number
+): any => (dispatch: any) => {
   console.info("Добавение в API", bulletin);
   fetch("http://ci2.dextechnology.com:8000/api/Bulletin/Add", {
     method: "POST",
@@ -29,7 +31,7 @@ export const addBulletinAction = (bulletin: IBulletinType): any => (
       Alert.success("Объявление добавлено успешно", {
         effect: "genie"
       });
-      dispatch(fetchBulletin(1, 100));
+      dispatch(fetchBulletin(page, pageSize));
     } else {
       // throw new Error("Something went wrong ...");
       Alert.error("Объявление не добавлено, внутренняя ошибка", {
