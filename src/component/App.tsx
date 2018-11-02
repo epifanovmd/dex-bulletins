@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import "node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css";
 
 import "./App.css";
 
@@ -71,17 +70,93 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
     };
     const changePageSize = (e: any) => {
       if (this.selectPageSize.current.value === "Все") {
+        this.props.onChangePage_Size(1, this.props.bulletins.count);
+      } else {
+        this.props.onChangePage_Size(1, this.selectPageSize.current.value);
+      }
+    };
+    const paginationOnClick = (e: any) => {
+      if (String(e.target.text) === "<<") {
         this.props.onChangePage_Size(
-          this.props.pageBulletins.page,
-          this.props.bulletins.count
+          this.props.pageBulletins.page - 1,
+          this.props.pageBulletins.pageSize
+        );
+      } else if (String(e.target.text) === ">>") {
+        this.props.onChangePage_Size(
+          Number(this.props.pageBulletins.page) + 1,
+          this.props.pageBulletins.pageSize
         );
       } else {
         this.props.onChangePage_Size(
-          this.props.pageBulletins.page,
-          this.selectPageSize.current.value
+          e.target.text,
+          this.props.pageBulletins.pageSize
         );
       }
     };
+
+    const paginationPages = () => {
+      const items = [];
+      const countPage = Math.ceil(
+        this.props.bulletins.count / this.props.pageBulletins.pageSize
+      );
+      for (let num = 1; num <= countPage; num++) {
+        items.push(
+          num === Number(this.props.pageBulletins.page) ? (
+            <li key={num} className="page-item active">
+              <a onClick={paginationOnClick} className="page-link">
+                {num}
+              </a>
+            </li>
+          ) : (
+            <li key={num} className="page-item">
+              <a onClick={paginationOnClick} className="page-link">
+                {num}
+              </a>
+            </li>
+          )
+        );
+      }
+      return items;
+    };
+
+    const paginationBasic = (
+      <div>
+        <nav aria-label="Page navigation example">
+          <ul className="pagination">
+            {Number(this.props.pageBulletins.page) === 1 ? (
+              <li className="page-item disabled">
+                <a className="page-link" aria-label="Previous">
+                  {"<<"}
+                </a>
+              </li>
+            ) : (
+              <li onClick={paginationOnClick} className="page-item">
+                <a className="page-link" aria-label="Previous">
+                  {"<<"}
+                </a>
+              </li>
+            )}
+            {paginationPages()}
+            {Number(this.props.pageBulletins.page) ===
+            Math.ceil(
+              this.props.bulletins.count / this.props.pageBulletins.pageSize
+            ) ? (
+              <li className="page-item disabled">
+                <a className="page-link" aria-label="Next">
+                  {">>"}
+                </a>
+              </li>
+            ) : (
+              <li onClick={paginationOnClick} className="page-item">
+                <a className="page-link" aria-label="Next">
+                  {">>"}
+                </a>
+              </li>
+            )}
+          </ul>
+        </nav>
+      </div>
+    );
 
     return (
       <div>
@@ -124,11 +199,12 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           </table>
           <p>Текущая страница: {this.props.pageBulletins.page}</p>
           <p>
-            Колличество страниц:{" "}
+            Колличество страниц:
             {Math.ceil(
               this.props.bulletins.count / this.props.pageBulletins.pageSize
             )}
           </p>
+          <div>{paginationBasic}</div>
 
           <select ref={this.selectPageSize} onChange={changePageSize}>
             <option>15</option>
