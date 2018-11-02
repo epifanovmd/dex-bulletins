@@ -1,6 +1,22 @@
 import Alert from "react-s-alert";
 
-export const fetchBulletinByFilterAction = (json: any): any => (dispatch: any) => {
+interface IFetchBulletinsParams {
+  pageFilter?: { page: number; pageSize: number };
+  sortParams?: [
+    {
+      fieldName: string;
+      isDesc: boolean;
+    }
+  ];
+  userId?: string;
+  searchText?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export const fetchBulletinByFilterAction = (
+  json: IFetchBulletinsParams
+): any => (dispatch: any) => {
   fetch("http://ci2.dextechnology.com:8000/api/Bulletin/GetByFilters", {
     method: "POST",
     headers: {

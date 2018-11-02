@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import "./App.css";
 
 import Header from "./Header";
-// import { fetchBulletin } from "../actions/fetchBulletinAction";
 import { fetchUsers } from "./../actions/fetchUsersAction";
 import { fetchBulletinByFilterAction } from "./../actions/fetchBulletinByFilterAction";
 
@@ -13,20 +12,26 @@ interface IMapStateToProps {
   bulletins: IBulletinsType;
   users: IUserType[];
   pageBulletins: { page: number; pageSize: number };
-  filterParams: IFilterParams;
+  filterParams: IFetchBulletinsParams;
 }
-interface IFilterParams {
-  userId: string;
-  searchText: string;
-  startDate: string;
-  endDate: string;
+interface IFetchBulletinsParams {
+  pageFilter?: { page: number; pageSize: number };
+  sortParams?: [
+    {
+      fieldName: string;
+      isDesc: boolean;
+    }
+  ];
+  userId?: string;
+  searchText?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 interface IMapDispatchToProps {
   onFetchBulletin: (json: any) => void;
   onBulletinForUpdate: (Bulletin: any) => void;
   onChangePage_Size: (Page: number, PageSize: number, json: any) => void;
-  onSetFetchBulletinsParam: (param: any) => void;
 }
 interface IBulletinsType {
   bulletins: IBulletinType[];
@@ -300,22 +305,23 @@ export default connect(
     filterParams: state.filterParams
   }),
   dispatch => ({
-    onFetchBulletin: (json: any): void => {
+    onFetchBulletin: (json: IFetchBulletinsParams): void => {
       dispatch(fetchUsers());
       dispatch(fetchBulletinByFilterAction(json));
     },
     onBulletinForUpdate: (Bulletin: any): void => {
       dispatch({ type: "BULLETIN_FOR_UPDATE", bulletin: Bulletin });
     },
-    onChangePage_Size: (Page: number, PageSize: number, json: any) => {
+    onChangePage_Size: (
+      Page: number,
+      PageSize: number,
+      json: IFetchBulletinsParams
+    ) => {
       dispatch({
         type: "BULLETIN_SET_PAGE_OR_PAGESIZE",
         pageOrPageSize: { page: Page, pageSize: PageSize }
       });
       dispatch(fetchBulletinByFilterAction(json));
-    },
-    onSetFetchBulletinsParam: (param: any) => {
-      dispatch({ type: "SET_FETCH_BULLETINS_PARAM", json: param });
     }
   })
 )(App);

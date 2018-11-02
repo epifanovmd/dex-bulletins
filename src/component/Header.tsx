@@ -15,38 +15,34 @@ import "react-s-alert/dist/s-alert-css-effects/stackslide.css";
 
 import "./Header.css";
 import { fetchBulletinByFilterAction } from "../actions/fetchBulletinByFilterAction";
+
 interface IStateProps {
   users: IUserType[];
   pageBulletins: { page: number; pageSize: number };
+  filterParams: IFetchBulletinsParams;
+}
+
+interface IFetchBulletinsParams {
+  pageFilter?: { page: number; pageSize: number };
+  sortParams?: [
+    {
+      fieldName: string;
+      isDesc: boolean;
+    }
+  ];
+  userId?: string;
+  searchText?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 interface IDispatchProps {
   onGetByFilter: (
     Page: number,
     PageSize: number,
-    json: IBulletinByFilter
+    json: IFetchBulletinsParams
   ) => void;
-  onSetFilterParams: (Params: IFilterParams) => void;
-}
-
-interface IFilterParams {
-  userId: string;
-  searchText: string;
-  startDate: string;
-  endDate: string;
-}
-
-interface IPageFilter {
-  page: number;
-  pageSize: number;
-}
-
-interface IBulletinByFilter {
-  pageFilter: IPageFilter;
-  userId: string;
-  searchText: string;
-  startDate: string;
-  endDate: string;
+  onSetFilterParams: (Params: IFetchBulletinsParams) => void;
 }
 
 interface IUserType {
@@ -90,7 +86,7 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
             : this.bulletinDateEnd.current.value
       };
 
-      const json: IBulletinByFilter = {
+      const json: IFetchBulletinsParams = {
         pageFilter: {
           page: 1,
           pageSize: this.props.pageBulletins.pageSize
@@ -109,6 +105,17 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
       }
     };
 
+    const getUserNameById = (id: any): string => {
+      let data: string = "";
+      this.props.users.forEach((user: IUserType) => {
+        if (user.id === id) {
+          data = user.name;
+          return;
+        }
+      });
+      return data;
+    };
+
     return (
       <div>
         <div className="d-flex p-2 fixed-top justify-content-around align-items-start">
@@ -125,6 +132,7 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
           <div className="m-3">
             <label className="px-3 lblColor">Пользователь</label>
             <select
+              defaultValue={getUserNameById(this.props.filterParams.userId)}
               className=""
               id="size"
               ref={this.bulletinAuthor}
@@ -138,6 +146,7 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
 
             <label className="px-3 lblColor">От</label>
             <input
+              defaultValue={this.props.filterParams.startDate}
               className=""
               id="size"
               type="date"
@@ -147,6 +156,7 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
 
             <label className="px-3 lblColor">До</label>
             <input
+              defaultValue={this.props.filterParams.endDate}
               id="size"
               type="date"
               ref={this.bulletinDateEnd}
@@ -161,6 +171,7 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
                 </span>
               </div>
               <input
+                defaultValue={this.props.filterParams.searchText}
                 type="text"
                 className="form-control"
                 placeholder="Общий поиск"
@@ -178,13 +189,14 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
 export default connect(
   (state: any) => ({
     users: state.users,
-    pageBulletins: state.pageBulletins
+    pageBulletins: state.pageBulletins,
+    filterParams: state.filterParams
   }),
   dispatch => ({
     onGetByFilter: (
       Page: number,
       PageSize: number,
-      json: IBulletinByFilter
+      json: IFetchBulletinsParams
     ): void => {
       dispatch({
         type: "BULLETIN_SET_PAGE_OR_PAGESIZE",
@@ -192,7 +204,7 @@ export default connect(
       });
       dispatch(fetchBulletinByFilterAction(json));
     },
-    onSetFilterParams: (Params: IFilterParams) => {
+    onSetFilterParams: (Params: IFetchBulletinsParams) => {
       dispatch({ type: "SET_FILTER_PARAMS", params: Params });
     }
   })

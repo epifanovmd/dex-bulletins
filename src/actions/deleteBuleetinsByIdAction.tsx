@@ -1,15 +1,24 @@
 import Alert from "react-s-alert";
 import { fetchBulletinByFilterAction } from "./fetchBulletinByFilterAction";
 
-interface IFilterParams {
-  userId: string;
-  searchText: string;
-  startDate: string;
-  endDate: string;
+interface IFetchBulletinsParams {
+  pageFilter?: { page: number; pageSize: number };
+  sortParams?: [
+    {
+      fieldName: string;
+      isDesc: boolean;
+    }
+  ];
+  userId?: string;
+  searchText?: string;
+  startDate?: string;
+  endDate?: string;
 }
-export const deleteBuleetinByIdAction = (id: any, json: IFilterParams): any => (
-  dispatch: any
-) => {
+
+export const deleteBuleetinByIdAction = (
+  id: any,
+  json: IFetchBulletinsParams
+): any => (dispatch: any) => {
   console.info("удаление в API", id);
   fetch(
     `curl -X POST 'http://ci2.dextechnology.com:8000/api/Bulletin/Delete/` + id

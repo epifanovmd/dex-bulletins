@@ -11,16 +11,24 @@ interface IBulletinType {
   content: string;
   rating: number;
 }
-interface IFilterParams {
-  userId: string;
-  searchText: string;
-  startDate: string;
-  endDate: string;
+
+interface IFetchBulletinsParams {
+  pageFilter?: { page: number; pageSize: number };
+  sortParams?: [
+    {
+      fieldName: string;
+      isDesc: boolean;
+    }
+  ];
+  userId?: string;
+  searchText?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export const addBulletinAction = (
   bulletin: IBulletinType,
-  json: IFilterParams
+  json: IFetchBulletinsParams
 ): any => (dispatch: any) => {
   console.info("Добавение в API", bulletin);
   fetch("http://ci2.dextechnology.com:8000/api/Bulletin/Add", {

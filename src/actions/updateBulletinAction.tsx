@@ -14,9 +14,23 @@ interface IBulletinType {
   rating: number;
 }
 
+interface IFetchBulletinsParams {
+  pageFilter?: { page: number; pageSize: number };
+  sortParams?: [
+    {
+      fieldName: string;
+      isDesc: boolean;
+    }
+  ];
+  userId?: string;
+  searchText?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
 export const updateBulletinAction = (
   bulletin: IBulletinType,
-  json: any
+  json: IFetchBulletinsParams
 ): any => (dispatch: any) => {
   // обновление в API
   console.log("обновление в API --> ", bulletin);
