@@ -19,12 +19,8 @@ interface IMapStateToProps {
 
 interface IMapDispatchToProps {
   onFetchBulletin: (page: number, pageSize: number) => void;
-  onBulletinByIdForUpdate: (id: any) => void;
-  onAddBulletinIdForDelete: (id: string) => void;
-  onDelBulletinIdForDelete: (id: string) => void;
-  onClearBulletinIdForDelete: () => void;
-  onBulletinDelete: (idArr: string[]) => void;
-  onSetSortParam: (json: any) => void;
+  onBulletinForUpdate: (Bulletin: any) => void;
+  onChangePage_Size: (Page: number, PageSize: number) => void;
 }
 interface IBulletinsType {
   bulletins: IBulletinType[];
@@ -50,15 +46,15 @@ interface IUserType {
 }
 
 class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
+  private selectPageSize: any = React.createRef();
   public render() {
-    console.log("Bulletins -", this.props.bulletins);
     if (this.props.users.length === 0) {
       this.props.onFetchBulletin(
         this.props.pageBulletins.page,
         this.props.pageBulletins.pageSize
       );
     }
-    const bullByIdForUpdate = (e: any) => {
+    const bullForUpdate = (e: any) => {
       const id = e.target.parentNode.getAttribute("data-item");
       if (id !== null) {
         let data;
@@ -69,8 +65,21 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           }
         });
 
-        this.props.onBulletinByIdForUpdate(data);
+        this.props.onBulletinForUpdate(data);
         this.props.history.push("/updtaebulletin");
+      }
+    };
+    const changePageSize = (e: any) => {
+      if (this.selectPageSize.current.value === "Все") {
+        this.props.onChangePage_Size(
+          this.props.pageBulletins.page,
+          this.props.bulletins.count
+        );
+      } else {
+        this.props.onChangePage_Size(
+          this.props.pageBulletins.page,
+          this.selectPageSize.current.value
+        );
       }
     };
 
@@ -96,7 +105,7 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
                       <tr
                         data-item={bulletin.id}
                         key={bulletin.id}
-                        onClick={bullByIdForUpdate}
+                        onClick={bullForUpdate}
                       >
                         <th scope="row">{bulletin.number}</th>
                         <td>
@@ -113,6 +122,27 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
                 : null}
             </tbody>
           </table>
+          <p>Текущая страница: {this.props.pageBulletins.page}</p>
+          <p>
+            Колличество страниц:{" "}
+            {Math.ceil(
+              this.props.bulletins.count / this.props.pageBulletins.pageSize
+            )}
+          </p>
+
+          <select ref={this.selectPageSize} onChange={changePageSize}>
+            <option>15</option>
+            <option>25</option>
+            <option>50</option>
+            <option>100</option>
+            <option>Все</option>
+          </select>
+          <div>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. <br />
+            Numquam facilis maxime, earum id aliquam, ratione <br />
+            nemo debitis nobis eum placeat amet nostrum delectus, <br />
+            possimus ut repudiandae at perferendis iusto aut. <br />
+          </div>
         </div>
       </div>
     );
@@ -132,8 +162,15 @@ export default connect(
       dispatch(fetchUsers());
       dispatch(fetchBulletin(page, pageSize));
     },
-    onBulletinByIdForUpdate: (id: any): void => {
-      dispatch({ type: "BULLETIN_FOR_UPDATE", bulletin: id });
+    onBulletinForUpdate: (Bulletin: any): void => {
+      dispatch({ type: "BULLETIN_FOR_UPDATE", bulletin: Bulletin });
+    },
+    onChangePage_Size: (Page: number, PageSize: number) => {
+      dispatch({
+        type: "BULLETIN_SET_PAGE_OR_PAGESIZE",
+        pageOrPageSize: { page: Page, pageSize: PageSize }
+      });
+      dispatch(fetchBulletin(Page, PageSize));
     }
   })
 )(App);

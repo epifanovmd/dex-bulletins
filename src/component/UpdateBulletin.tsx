@@ -17,7 +17,7 @@ interface IMapDispatchToProps {
     page: number,
     pageSize: number
   ) => void;
-  onDeleteBulletin: (Id: string) => void;
+  onDeleteBulletin: (id: string, page: number, pageSize: number) => void;
 }
 interface IBulletinType {
   id?: string;
@@ -108,7 +108,11 @@ class UpdateBulletin extends React.Component<
     const deleteBulletin = (e: any) => {
       e.preventDefault();
       if (this.props.bulletinForUpdate.id !== undefined) {
-        this.props.onDeleteBulletin(this.props.bulletinForUpdate.id);
+        this.props.onDeleteBulletin(
+          this.props.bulletinForUpdate.id,
+          this.props.pageBulletins.page,
+          this.props.pageBulletins.pageSize
+        );
       }
       this.props.history.push("/");
     };
@@ -218,8 +222,8 @@ export default connect(
       dispatch(updateBulletinAction(bulletin, page, pageSize));
       dispatch({ type: "CLEAR_BULLETIN_FOR_UPDATE", bulletin });
     },
-    onDeleteBulletin: (Id: string) => {
-      dispatch(deleteBuleetinByIdAction(Id));
+    onDeleteBulletin: (id: string, page: number, pageSize: number) => {
+      dispatch(deleteBuleetinByIdAction(id, page, pageSize));
     }
   })
 )(UpdateBulletin);
