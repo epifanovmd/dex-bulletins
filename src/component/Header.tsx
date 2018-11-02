@@ -14,14 +14,26 @@ import "react-s-alert/dist/s-alert-css-effects/jelly.css";
 import "react-s-alert/dist/s-alert-css-effects/stackslide.css";
 
 import "./Header.css";
-import { bulletinByFilterAction } from "../actions/fetchBulletinByFilterAction";
+import { fetchBulletinByFilterAction } from "../actions/fetchBulletinByFilterAction";
 interface IStateProps {
   users: IUserType[];
-  pageBulletins: {page: number, pageSize: number}
+  pageBulletins: { page: number; pageSize: number };
 }
 
 interface IDispatchProps {
-  onGetByFilter: (json: IBulletinByFilter) => void;
+  onGetByFilter: (
+    Page: number,
+    PageSize: number,
+    json: IBulletinByFilter
+  ) => void;
+  onSetFilterParams: (Params: IFilterParams) => void;
+}
+
+interface IFilterParams {
+  userId: string;
+  searchText: string;
+  startDate: string;
+  endDate: string;
 }
 
 interface IPageFilter {
@@ -62,11 +74,7 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
     };
 
     const getByFilter = () => {
-      const json: IBulletinByFilter = {
-        pageFilter: {
-          page: this.props.pageBulletins.page,
-          pageSize: this.props.pageBulletins.pageSize
-        },
+      const param = {
         userId:
           this.bulletinAuthor.current.value === "Все"
             ? ""
@@ -81,7 +89,19 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
             ? ""
             : this.bulletinDateEnd.current.value
       };
-      this.props.onGetByFilter(json);
+
+      const json: IBulletinByFilter = {
+        pageFilter: {
+          page: 1,
+          pageSize: this.props.pageBulletins.pageSize
+        },
+        userId: param.userId,
+        searchText: param.searchText,
+        startDate: param.startDate,
+        endDate: param.endDate
+      };
+      this.props.onGetByFilter(1, this.props.pageBulletins.pageSize, json);
+      this.props.onSetFilterParams(param);
     };
     const redirectToAddBulletinPage = (): void => {
       if (document.location !== null) {
@@ -157,12 +177,23 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
 
 export default connect(
   (state: any) => ({
-    users: state.users, 
+    users: state.users,
     pageBulletins: state.pageBulletins
   }),
   dispatch => ({
-    onGetByFilter: (json: IBulletinByFilter): void => {
-      dispatch(bulletinByFilterAction(json));
+    onGetByFilter: (
+      Page: number,
+      PageSize: number,
+      json: IBulletinByFilter
+    ): void => {
+      dispatch({
+        type: "BULLETIN_SET_PAGE_OR_PAGESIZE",
+        pageOrPageSize: { page: Page, pageSize: PageSize }
+      });
+      dispatch(fetchBulletinByFilterAction(json));
+    },
+    onSetFilterParams: (Params: IFilterParams) => {
+      dispatch({ type: "SET_FILTER_PARAMS", params: Params });
     }
   })
 )(Header);

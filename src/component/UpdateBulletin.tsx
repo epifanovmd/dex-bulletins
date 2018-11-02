@@ -9,15 +9,13 @@ interface IMapStateToProps {
   users: any;
   bulletinIdForUpdate: string;
   pageBulletins: { page: number; pageSize: number };
+
+  filterParams: any;
 }
 
 interface IMapDispatchToProps {
-  onUpdateBulletin: (
-    bulletin: IBulletinType,
-    page: number,
-    pageSize: number
-  ) => void;
-  onDeleteBulletin: (id: string, page: number, pageSize: number) => void;
+  onUpdateBulletin: (bulletin: IBulletinType, json: any) => void;
+  onDeleteBulletin: (id: string, json: any) => void;
 }
 interface IBulletinType {
   id?: string;
@@ -68,6 +66,23 @@ class UpdateBulletin extends React.Component<
   }
 
   public render() {
+    const jsonParams = {
+      pageFilter: {
+        page: this.props.pageBulletins.page,
+        pageSize: this.props.pageBulletins.pageSize
+      },
+      sortParams: [
+        {
+          fieldName: "number",
+          isDesc: false
+        }
+      ],
+      userId: this.props.filterParams.userId,
+      searchText: this.props.filterParams.searchText,
+      startDate: this.props.filterParams.startDate,
+      endDate: this.props.filterParams.endDate
+    };
+
     const updateBulletin = (e: any) => {
       e.preventDefault();
       const numberbulletin = this.bulletinNumber.current.value;
@@ -97,21 +112,17 @@ class UpdateBulletin extends React.Component<
         content: contentbulletin,
         rating: ratingbulletin
       };
-      this.props.onUpdateBulletin(
-        bulletin,
-        this.props.pageBulletins.page,
-        this.props.pageBulletins.pageSize
-      );
+      this.props.onUpdateBulletin(bulletin, jsonParams);
       this.props.history.push("/");
     };
 
     const deleteBulletin = (e: any) => {
       e.preventDefault();
+
       if (this.props.bulletinForUpdate.id !== undefined) {
         this.props.onDeleteBulletin(
           this.props.bulletinForUpdate.id,
-          this.props.pageBulletins.page,
-          this.props.pageBulletins.pageSize
+          jsonParams
         );
       }
       this.props.history.push("/");
@@ -211,19 +222,16 @@ export default connect(
   (state: any) => ({
     bulletinForUpdate: state.bulletinForUpdate,
     users: state.users,
-    pageBulletins: state.pageBulletins
+    pageBulletins: state.pageBulletins,
+    filterParams: state.filterParams
   }),
   dispatch => ({
-    onUpdateBulletin: (
-      bulletin: IBulletinType,
-      page: number,
-      pageSize: number
-    ): void => {
-      dispatch(updateBulletinAction(bulletin, page, pageSize));
+    onUpdateBulletin: (bulletin: IBulletinType, json: any): void => {
+      dispatch(updateBulletinAction(bulletin, json));
       dispatch({ type: "CLEAR_BULLETIN_FOR_UPDATE", bulletin });
     },
-    onDeleteBulletin: (id: string, page: number, pageSize: number) => {
-      dispatch(deleteBuleetinByIdAction(id, page, pageSize));
+    onDeleteBulletin: (id: string, json: any) => {
+      dispatch(deleteBuleetinByIdAction(id, json));
     }
   })
 )(UpdateBulletin);

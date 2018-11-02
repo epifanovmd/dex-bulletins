@@ -1,5 +1,5 @@
 import Alert from "react-s-alert";
-import { fetchBulletin } from "./fetchBulletinAction";
+import { fetchBulletinByFilterAction } from "./fetchBulletinByFilterAction";
 
 interface IBulletinType {
   id?: string;
@@ -16,8 +16,7 @@ interface IBulletinType {
 
 export const updateBulletinAction = (
   bulletin: IBulletinType,
-  page: number,
-  pageSize: number
+  json: any
 ): any => (dispatch: any) => {
   // обновление в API
   console.log("обновление в API --> ", bulletin);
@@ -32,7 +31,7 @@ export const updateBulletinAction = (
     if (response.ok) {
       console.log(response);
       // загрузить объявления
-      dispatch(fetchBulletin(page, pageSize));
+      dispatch(fetchBulletinByFilterAction(json));
       Alert.success("Изменения сохранены", {
         effect: "slide"
       });

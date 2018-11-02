@@ -1,11 +1,15 @@
 import Alert from "react-s-alert";
-import { fetchBulletin } from "./fetchBulletinAction";
+import { fetchBulletinByFilterAction } from "./fetchBulletinByFilterAction";
 
-export const deleteBuleetinByIdAction = (
-  id: any,
-  page: number,
-  pageSize: number
-): any => (dispatch: any) => {
+interface IFilterParams {
+  userId: string;
+  searchText: string;
+  startDate: string;
+  endDate: string;
+}
+export const deleteBuleetinByIdAction = (id: any, json: IFilterParams): any => (
+  dispatch: any
+) => {
   console.info("удаление в API", id);
   fetch(
     `curl -X POST 'http://ci2.dextechnology.com:8000/api/Bulletin/Delete/` + id
@@ -16,7 +20,7 @@ export const deleteBuleetinByIdAction = (
         Alert.success("Объявление удалено успешно", {
           effect: "slide"
         });
-        dispatch(fetchBulletin(page, pageSize));
+        dispatch(fetchBulletinByFilterAction(json));
       } else {
         // throw new Error("Something went wrong ...");
         Alert.error("Внутренняя ошибка", {

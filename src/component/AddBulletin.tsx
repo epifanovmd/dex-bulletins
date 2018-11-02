@@ -3,21 +3,24 @@ import { connect } from "react-redux";
 
 import { fetchUsers } from "./../actions/fetchUsersAction";
 import { addBulletinAction } from "../actions/addBulletinAction";
-// import { fetchBulletin } from "./../actions/fetchBulletinAction";
+
+interface IFilterParams {
+  userId: string;
+  searchText: string;
+  startDate: string;
+  endDate: string;
+}
 
 interface IMapStateToProps {
   history?: any;
   users: IUserType[];
   pageBulletins: { page: number; pageSize: number };
+  filterParams: IFilterParams;
 }
 
 interface IMapDispatchToProps {
   onFetchUsers: () => void;
-  onAddBulletin: (
-    bulletin: IBulletinType,
-    page: number,
-    pageSize: number
-  ) => void;
+  onAddBulletin: (bulletin: IBulletinType, json: any) => void;
   onBulletinByIdForUpdate: (id: string) => void;
   onAddBulletinIdForDelete: (id: string) => void;
   onDelBulletinIdForDelete: (id: string) => void;
@@ -81,11 +84,24 @@ class AddBulletin extends React.Component<
         rating: bulletinrating
       };
 
-      this.props.onAddBulletin(
-        bulletin,
-        this.props.pageBulletins.page,
-        this.props.pageBulletins.pageSize
-      );
+      const jsonParams = {
+        pageFilter: {
+          page: this.props.pageBulletins.page,
+          pageSize: this.props.pageBulletins.pageSize
+        },
+        sortParams: [
+          {
+            fieldName: "number",
+            isDesc: false
+          }
+        ],
+        userId: this.props.filterParams.userId,
+        searchText: this.props.filterParams.searchText,
+        startDate: this.props.filterParams.startDate,
+        endDate: this.props.filterParams.endDate
+      };
+
+      this.props.onAddBulletin(bulletin, jsonParams);
       this.props.history.push("/");
     };
 
@@ -179,19 +195,15 @@ class AddBulletin extends React.Component<
 export default connect(
   (state: any) => ({
     users: state.users,
-    pageBulletins: state.pageBulletins
+    pageBulletins: state.pageBulletins,
+    filterParams: state.filterParams
   }),
   dispatch => ({
     onFetchUsers: (): void => {
       dispatch(fetchUsers());
-      // dispatch(fetchBulletin(page, pageSize));
     },
-    onAddBulletin: (
-      bulletin: IBulletinType,
-      page: number,
-      pageSize: number
-    ): void => {
-      dispatch(addBulletinAction(bulletin, page, pageSize));
+    onAddBulletin: (bulletin: IBulletinType, json: any): void => {
+      dispatch(addBulletinAction(bulletin, json));
     }
   })
 )(AddBulletin);

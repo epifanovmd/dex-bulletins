@@ -1,6 +1,6 @@
 import Alert from "react-s-alert";
 
-export const bulletinByFilterAction = (json: any): any => (dispatch: any) => {
+export const fetchBulletinByFilterAction = (json: any): any => (dispatch: any) => {
   fetch("http://ci2.dextechnology.com:8000/api/Bulletin/GetByFilters", {
     method: "POST",
     headers: {

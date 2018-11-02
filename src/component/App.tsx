@@ -4,22 +4,29 @@ import { connect } from "react-redux";
 import "./App.css";
 
 import Header from "./Header";
-import { fetchBulletin } from "../actions/fetchBulletinAction";
+// import { fetchBulletin } from "../actions/fetchBulletinAction";
 import { fetchUsers } from "./../actions/fetchUsersAction";
+import { fetchBulletinByFilterAction } from "./../actions/fetchBulletinByFilterAction";
 
 interface IMapStateToProps {
   history?: any;
   bulletins: IBulletinsType;
   users: IUserType[];
-  bulletinIdForDelete: string[];
-  bulletinIdForUpdate: string;
   pageBulletins: { page: number; pageSize: number };
+  filterParams: IFilterParams;
+}
+interface IFilterParams {
+  userId: string;
+  searchText: string;
+  startDate: string;
+  endDate: string;
 }
 
 interface IMapDispatchToProps {
-  onFetchBulletin: (page: number, pageSize: number) => void;
+  onFetchBulletin: (json: any) => void;
   onBulletinForUpdate: (Bulletin: any) => void;
-  onChangePage_Size: (Page: number, PageSize: number) => void;
+  onChangePage_Size: (Page: number, PageSize: number, json: any) => void;
+  onSetFetchBulletinsParam: (param: any) => void;
 }
 interface IBulletinsType {
   bulletins: IBulletinType[];
@@ -46,13 +53,45 @@ interface IUserType {
 
 class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
   private selectPageSize: any = React.createRef();
+
   public render() {
+    const setFetchBulletinsParams = (
+      Page: number,
+      PageSize: number,
+      FieldName: string,
+      IsDesc: boolean
+    ) => {
+      const jsonParams = {
+        pageFilter: {
+          page: Page,
+          pageSize: PageSize
+        },
+        sortParams: [
+          {
+            fieldName: FieldName,
+            isDesc: IsDesc
+          }
+        ],
+        userId: this.props.filterParams.userId,
+        searchText: this.props.filterParams.searchText,
+        startDate: this.props.filterParams.startDate,
+        endDate: this.props.filterParams.endDate
+      };
+
+      return jsonParams;
+    };
+
     if (this.props.users.length === 0) {
       this.props.onFetchBulletin(
-        this.props.pageBulletins.page,
-        this.props.pageBulletins.pageSize
+        setFetchBulletinsParams(
+          this.props.pageBulletins.page,
+          this.props.pageBulletins.pageSize,
+          "number",
+          false
+        )
       );
     }
+
     const bullForUpdate = (e: any) => {
       const id = e.target.parentNode.getAttribute("data-item");
       if (id !== null) {
@@ -70,26 +109,62 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
     };
     const changePageSize = (e: any) => {
       if (this.selectPageSize.current.value === "Все") {
-        this.props.onChangePage_Size(1, this.props.bulletins.count);
+        this.props.onChangePage_Size(
+          1,
+          this.props.bulletins.count,
+          setFetchBulletinsParams(
+            1,
+            this.props.bulletins.count,
+            "number",
+            false
+          )
+        );
       } else {
-        this.props.onChangePage_Size(1, this.selectPageSize.current.value);
+        this.props.onChangePage_Size(
+          1,
+          this.selectPageSize.current.value,
+          setFetchBulletinsParams(
+            1,
+            this.selectPageSize.current.value,
+            "number",
+            false
+          )
+        );
       }
     };
     const paginationOnClick = (e: any) => {
       if (String(e.target.text) === "<<") {
         this.props.onChangePage_Size(
           this.props.pageBulletins.page - 1,
-          this.props.pageBulletins.pageSize
+          this.props.pageBulletins.pageSize,
+          setFetchBulletinsParams(
+            this.props.pageBulletins.page - 1,
+            this.props.pageBulletins.pageSize,
+            "number",
+            false
+          )
         );
       } else if (String(e.target.text) === ">>") {
         this.props.onChangePage_Size(
           Number(this.props.pageBulletins.page) + 1,
-          this.props.pageBulletins.pageSize
+          this.props.pageBulletins.pageSize,
+          setFetchBulletinsParams(
+            this.props.pageBulletins.page + 1,
+            this.props.pageBulletins.pageSize,
+            "number",
+            false
+          )
         );
       } else {
         this.props.onChangePage_Size(
           e.target.text,
-          this.props.pageBulletins.pageSize
+          this.props.pageBulletins.pageSize,
+          setFetchBulletinsParams(
+            e.target.text,
+            this.props.pageBulletins.pageSize,
+            "number",
+            false
+          )
         );
       }
     };
@@ -162,8 +237,8 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
       <div>
         <Header />
 
-        <div className="container pt-5 mt-5">
-          <table className="table table-striped table-dark">
+        <div className="container-fluid px-0 pt-5 mt-5 color_">
+          <table className="table table-striped">
             <thead>
               <tr>
                 <th scope="col">Номер</th>
@@ -197,27 +272,19 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
                 : null}
             </tbody>
           </table>
-          <p>Текущая страница: {this.props.pageBulletins.page}</p>
-          <p>
-            Колличество страниц:
-            {Math.ceil(
-              this.props.bulletins.count / this.props.pageBulletins.pageSize
-            )}
-          </p>
-          <div>{paginationBasic}</div>
-
-          <select ref={this.selectPageSize} onChange={changePageSize}>
-            <option>15</option>
-            <option>25</option>
-            <option>50</option>
-            <option>100</option>
-            <option>Все</option>
-          </select>
-          <div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. <br />
-            Numquam facilis maxime, earum id aliquam, ratione <br />
-            nemo debitis nobis eum placeat amet nostrum delectus, <br />
-            possimus ut repudiandae at perferendis iusto aut. <br />
+          <div className="d-flex justify-content-between pb-5 mb-5">
+            <div className="p-0">
+              <select ref={this.selectPageSize} onChange={changePageSize}>
+                <option>15</option>
+                <option>25</option>
+                <option>50</option>
+                <option>100</option>
+                <option>Все</option>
+              </select>
+            </div>
+            <div className="p-0">
+              <div>{paginationBasic}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -229,24 +296,26 @@ export default connect(
   (state: any) => ({
     bulletins: state.bulletins,
     users: state.users,
-    bulletinIdForDelete: state.bulletinIdForDelete,
-    bulletinIdForUpdate: state.bulletinIdForUpdate,
-    pageBulletins: state.pageBulletins
+    pageBulletins: state.pageBulletins,
+    filterParams: state.filterParams
   }),
   dispatch => ({
-    onFetchBulletin: (page: number, pageSize: number): void => {
+    onFetchBulletin: (json: any): void => {
       dispatch(fetchUsers());
-      dispatch(fetchBulletin(page, pageSize));
+      dispatch(fetchBulletinByFilterAction(json));
     },
     onBulletinForUpdate: (Bulletin: any): void => {
       dispatch({ type: "BULLETIN_FOR_UPDATE", bulletin: Bulletin });
     },
-    onChangePage_Size: (Page: number, PageSize: number) => {
+    onChangePage_Size: (Page: number, PageSize: number, json: any) => {
       dispatch({
         type: "BULLETIN_SET_PAGE_OR_PAGESIZE",
         pageOrPageSize: { page: Page, pageSize: PageSize }
       });
-      dispatch(fetchBulletin(Page, PageSize));
+      dispatch(fetchBulletinByFilterAction(json));
+    },
+    onSetFetchBulletinsParam: (param: any) => {
+      dispatch({ type: "SET_FETCH_BULLETINS_PARAM", json: param });
     }
   })
 )(App);

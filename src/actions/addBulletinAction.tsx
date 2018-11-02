@@ -1,5 +1,5 @@
-import { fetchBulletin } from "./fetchBulletinAction";
 import Alert from "react-s-alert";
+import { fetchBulletinByFilterAction } from "./fetchBulletinByFilterAction";
 
 interface IBulletinType {
   id?: string;
@@ -11,11 +11,16 @@ interface IBulletinType {
   content: string;
   rating: number;
 }
+interface IFilterParams {
+  userId: string;
+  searchText: string;
+  startDate: string;
+  endDate: string;
+}
 
 export const addBulletinAction = (
   bulletin: IBulletinType,
-  page: number,
-  pageSize: number
+  json: IFilterParams
 ): any => (dispatch: any) => {
   console.info("Добавение в API", bulletin);
   fetch("http://ci2.dextechnology.com:8000/api/Bulletin/Add", {
@@ -31,7 +36,7 @@ export const addBulletinAction = (
       Alert.success("Объявление добавлено успешно", {
         effect: "genie"
       });
-      dispatch(fetchBulletin(page, pageSize));
+      dispatch(fetchBulletinByFilterAction(json));
     } else {
       // throw new Error("Something went wrong ...");
       Alert.error("Объявление не добавлено, внутренняя ошибка", {
