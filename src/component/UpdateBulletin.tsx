@@ -1,5 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { IBulletinType, IUserType } from "../types/types";
+
 import { updateBulletinAction } from "./../actions/updateBulletinAction";
 import { deleteBuleetinByIdAction } from "./../actions/deleteBuleetinsByIdAction";
 
@@ -16,24 +18,6 @@ interface IMapStateToProps {
 interface IMapDispatchToProps {
   onUpdateBulletin: (bulletin: IBulletinType, json: any) => void;
   onDeleteBulletin: (id: string, json: any) => void;
-}
-interface IBulletinType {
-  id?: string;
-  createdUtc?: string;
-  created?: string;
-  updatedUtc?: string;
-  deletedUtc?: string;
-  number: number;
-  userId?: string;
-  user?: string;
-  content: string;
-  rating: number;
-}
-
-interface IUserType {
-  id: string;
-  createdUtc: string;
-  name: string;
 }
 
 class UpdateBulletin extends React.Component<
@@ -73,8 +57,15 @@ class UpdateBulletin extends React.Component<
       },
       sortParams: [
         {
-          fieldName: "number",
-          isDesc: false
+          fieldName:
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].fieldName
+              : "Number",
+
+          isDesc:
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].isDesc
+              : false
         }
       ],
       userId: this.props.filterParams.userId,

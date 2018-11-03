@@ -1,4 +1,8 @@
 const initialState: any = {
+  sortParam: {
+    fieldName: "Number",
+    isDesc: false
+  },
   userId: "",
   searchText: "",
   startDate: "",

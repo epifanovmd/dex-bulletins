@@ -1,18 +1,5 @@
 import Alert from "react-s-alert";
-
-interface IFetchBulletinsParams {
-  pageFilter?: { page: number; pageSize: number };
-  sortParams?: [
-    {
-      fieldName: string;
-      isDesc: boolean;
-    }
-  ];
-  userId?: string;
-  searchText?: string;
-  startDate?: string;
-  endDate?: string;
-}
+import { IFetchBulletinsParams } from "../types/types";
 
 export const fetchBulletinByFilterAction = (
   json: IFetchBulletinsParams

@@ -1,5 +1,10 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import {
+  IBulletinsType,
+  IFetchBulletinsParams,
+  IUserType
+} from "../types/types";
 
 import "./App.css";
 
@@ -14,46 +19,11 @@ interface IMapStateToProps {
   pageBulletins: { page: number; pageSize: number };
   filterParams: IFetchBulletinsParams;
 }
-interface IFetchBulletinsParams {
-  pageFilter?: { page: number; pageSize: number };
-  sortParams?: [
-    {
-      fieldName: string;
-      isDesc: boolean;
-    }
-  ];
-  userId?: string;
-  searchText?: string;
-  startDate?: string;
-  endDate?: string;
-}
 
 interface IMapDispatchToProps {
   onFetchBulletin: (json: any) => void;
   onBulletinForUpdate: (Bulletin: any) => void;
   onChangePage_Size: (Page: number, PageSize: number, json: any) => void;
-}
-interface IBulletinsType {
-  bulletins: IBulletinType[];
-  count: number;
-}
-interface IBulletinType {
-  id?: string;
-  createdUtc: string;
-  updatedUtc: string;
-  deletedUtc?: string;
-  created?: string;
-  number: number;
-  userId: string;
-  user?: string;
-  content: string;
-  rating: number;
-}
-
-interface IUserType {
-  id: string;
-  createdUtc: string;
-  name: string;
 }
 
 class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
@@ -120,8 +90,12 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             1,
             this.props.bulletins.count,
-            "number",
-            false
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].fieldName
+              : "Number",
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].isDesc
+              : false
           )
         );
       } else {
@@ -131,8 +105,12 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             1,
             this.selectPageSize.current.value,
-            "number",
-            false
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].fieldName
+              : "Number",
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].isDesc
+              : false
           )
         );
       }
@@ -145,8 +123,12 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             this.props.pageBulletins.page - 1,
             this.props.pageBulletins.pageSize,
-            "number",
-            false
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].fieldName
+              : "Number",
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].isDesc
+              : false
           )
         );
       } else if (String(e.target.text) === ">>") {
@@ -156,8 +138,12 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             this.props.pageBulletins.page + 1,
             this.props.pageBulletins.pageSize,
-            "number",
-            false
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].fieldName
+              : "Number",
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].isDesc
+              : false
           )
         );
       } else {
@@ -167,8 +153,12 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             e.target.text,
             this.props.pageBulletins.pageSize,
-            "number",
-            false
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].fieldName
+              : "Number",
+            this.props.filterParams.sortParams !== undefined
+              ? this.props.filterParams.sortParams[0].isDesc
+              : false
           )
         );
       }
@@ -246,11 +236,26 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           <table className="table table-striped">
             <thead>
               <tr>
-                <th scope="col">Номер</th>
-                <th scope="col">Создано</th>
-                <th scope="col">Объявление</th>
-                <th scope="col">Рейтинг</th>
-                <th scope="col">Пользователь</th>
+                <th scope="col">
+                  Номер
+                  <i className="fa fa-sort float-right" aria-hidden="true" />
+                </th>
+                <th scope="col">
+                  Создано
+                  <i className="fa fa-sort float-right" aria-hidden="true" />
+                </th>
+                <th scope="col">
+                  Объявление
+                  <i className="fa fa-sort float-right" aria-hidden="true" />
+                </th>
+                <th scope="col">
+                  Рейтинг
+                  <i className="fa fa-sort float-right" aria-hidden="true" />
+                </th>
+                <th scope="col">
+                  Пользователь
+                  <i className="fa fa-sort float-right" aria-hidden="true" />
+                </th>
               </tr>
             </thead>
             <tbody>

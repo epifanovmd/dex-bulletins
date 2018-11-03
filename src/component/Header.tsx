@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { debounce } from "throttle-debounce";
+import { IFetchBulletinsParams, IUserType } from "../types/types";
 
 import Alert from "react-s-alert";
 import "react-s-alert/dist/s-alert-default.css";
@@ -16,27 +17,13 @@ import "react-s-alert/dist/s-alert-css-effects/stackslide.css";
 import "./Header.css";
 import { fetchBulletinByFilterAction } from "../actions/fetchBulletinByFilterAction";
 
-interface IStateProps {
+interface IMapStateToProps {
   users: IUserType[];
   pageBulletins: { page: number; pageSize: number };
   filterParams: IFetchBulletinsParams;
 }
 
-interface IFetchBulletinsParams {
-  pageFilter?: { page: number; pageSize: number };
-  sortParams?: [
-    {
-      fieldName: string;
-      isDesc: boolean;
-    }
-  ];
-  userId?: string;
-  searchText?: string;
-  startDate?: string;
-  endDate?: string;
-}
-
-interface IDispatchProps {
+interface IMapDispatchToProps {
   onGetByFilter: (
     Page: number,
     PageSize: number,
@@ -45,13 +32,7 @@ interface IDispatchProps {
   onSetFilterParams: (Params: IFetchBulletinsParams) => void;
 }
 
-interface IUserType {
-  id: string;
-  createdUtc: string;
-  name: string;
-}
-
-class Header extends React.Component<IStateProps & IDispatchProps> {
+class Header extends React.Component<IMapStateToProps & IMapDispatchToProps> {
   private bulletinDateStart: any = React.createRef();
   private bulletinDateEnd: any = React.createRef();
   private bulletinAuthor: any = React.createRef();
@@ -91,6 +72,18 @@ class Header extends React.Component<IStateProps & IDispatchProps> {
           page: 1,
           pageSize: this.props.pageBulletins.pageSize
         },
+        sortParams: [
+          {
+            fieldName:
+              this.props.filterParams.sortParams !== undefined
+                ? this.props.filterParams.sortParams[0].fieldName
+                : "Number",
+            isDesc:
+              this.props.filterParams.sortParams !== undefined
+                ? this.props.filterParams.sortParams[0].isDesc
+                : false
+          }
+        ],
         userId: param.userId,
         searchText: param.searchText,
         startDate: param.startDate,

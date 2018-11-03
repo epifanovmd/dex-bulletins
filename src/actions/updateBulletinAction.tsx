@@ -1,32 +1,7 @@
 import Alert from "react-s-alert";
+import { IBulletinType, IFetchBulletinsParams } from "../types/types";
+
 import { fetchBulletinByFilterAction } from "./fetchBulletinByFilterAction";
-
-interface IBulletinType {
-  id?: string;
-  createdUtc?: string;
-  created?: string;
-  updatedUtc?: string;
-  deletedUtc?: string;
-  number: number;
-  userId?: string;
-  user?: string;
-  content: string;
-  rating: number;
-}
-
-interface IFetchBulletinsParams {
-  pageFilter?: { page: number; pageSize: number };
-  sortParams?: [
-    {
-      fieldName: string;
-      isDesc: boolean;
-    }
-  ];
-  userId?: string;
-  searchText?: string;
-  startDate?: string;
-  endDate?: string;
-}
 
 export const updateBulletinAction = (
   bulletin: IBulletinType,

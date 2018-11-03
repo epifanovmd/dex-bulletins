@@ -1,21 +1,19 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import {
+  IBulletinType,
+  IFetchBulletinsParams,
+  IUserType
+} from "../types/types";
 
 import { fetchUsers } from "./../actions/fetchUsersAction";
 import { addBulletinAction } from "../actions/addBulletinAction";
-
-interface IFilterParams {
-  userId: string;
-  searchText: string;
-  startDate: string;
-  endDate: string;
-}
 
 interface IMapStateToProps {
   history?: any;
   users: IUserType[];
   pageBulletins: { page: number; pageSize: number };
-  filterParams: IFilterParams;
+  filterParams: IFetchBulletinsParams;
 }
 
 interface IMapDispatchToProps {
@@ -26,23 +24,6 @@ interface IMapDispatchToProps {
   onDelBulletinIdForDelete: (id: string) => void;
   onClearBulletinIdForDelete: () => void;
   onBulletinDelete: (idArr: string[]) => void;
-}
-
-interface IBulletinType {
-  id?: string;
-  createdUtc: string;
-  updatedUtc: string;
-  deletedUtc?: string;
-  number: number;
-  userId: string;
-  content: string;
-  rating: number;
-}
-
-interface IUserType {
-  id: string;
-  createdUtc: string;
-  name: string;
 }
 
 class AddBulletin extends React.Component<
@@ -91,8 +72,15 @@ class AddBulletin extends React.Component<
         },
         sortParams: [
           {
-            fieldName: "number",
-            isDesc: false
+            fieldName:
+              this.props.filterParams.sortParams !== undefined
+                ? this.props.filterParams.sortParams[0].fieldName
+                : "Number",
+
+            isDesc:
+              this.props.filterParams.sortParams !== undefined
+                ? this.props.filterParams.sortParams[0].isDesc
+                : false
           }
         ],
         userId: this.props.filterParams.userId,

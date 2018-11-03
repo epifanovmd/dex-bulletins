@@ -1,19 +1,7 @@
 import Alert from "react-s-alert";
-import { fetchBulletinByFilterAction } from "./fetchBulletinByFilterAction";
+import { IFetchBulletinsParams } from "../types/types";
 
-interface IFetchBulletinsParams {
-  pageFilter?: { page: number; pageSize: number };
-  sortParams?: [
-    {
-      fieldName: string;
-      isDesc: boolean;
-    }
-  ];
-  userId?: string;
-  searchText?: string;
-  startDate?: string;
-  endDate?: string;
-}
+import { fetchBulletinByFilterAction } from "./fetchBulletinByFilterAction";
 
 export const deleteBuleetinByIdAction = (
   id: any,
