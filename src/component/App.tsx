@@ -63,12 +63,8 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
         setFetchBulletinsParams(
           this.props.pageBulletins.page,
           this.props.pageBulletins.pageSize,
-          this.props.filterParams.sortParam !== undefined
-            ? this.props.filterParams.sortParam.fieldName
-            : "Number",
-          this.props.filterParams.sortParam !== undefined
-            ? this.props.filterParams.sortParam.isDesc
-            : false
+          this.props.filterParams.sortParam.fieldName,
+          this.props.filterParams.sortParam.isDesc
         )
       );
     }
@@ -96,7 +92,6 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             1,
             this.props.bulletins.count,
-
             this.props.filterParams.sortParam.fieldName,
             this.props.filterParams.sortParam.isDesc
           )
