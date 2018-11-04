@@ -1,7 +1,11 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { debounce } from "throttle-debounce";
-import { IFetchBulletinsParams, IUserType } from "../types/types";
+import {
+  IFetchBulletinsParams,
+  IFilterParams,
+  IUserType
+} from "../types/types";
 
 import Alert from "react-s-alert";
 import "react-s-alert/dist/s-alert-default.css";
@@ -14,13 +18,12 @@ import "react-s-alert/dist/s-alert-css-effects/genie.css";
 import "react-s-alert/dist/s-alert-css-effects/jelly.css";
 import "react-s-alert/dist/s-alert-css-effects/stackslide.css";
 
-import "./Header.css";
 import { fetchBulletinByFilterAction } from "../actions/fetchBulletinByFilterAction";
 
 interface IMapStateToProps {
   users: IUserType[];
   pageBulletins: { page: number; pageSize: number };
-  filterParams: IFetchBulletinsParams;
+  filterParams: IFilterParams;
 }
 
 interface IMapDispatchToProps {
@@ -29,7 +32,7 @@ interface IMapDispatchToProps {
     PageSize: number,
     json: IFetchBulletinsParams
   ) => void;
-  onSetFilterParams: (Params: IFetchBulletinsParams) => void;
+  onSetFilterParams: (Params: IFilterParams) => void;
 }
 
 class Header extends React.Component<IMapStateToProps & IMapDispatchToProps> {
@@ -52,6 +55,16 @@ class Header extends React.Component<IMapStateToProps & IMapDispatchToProps> {
 
     const getByFilter = () => {
       const param = {
+        sortParam: {
+          fieldName:
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.fieldName
+              : "Number",
+          isDesc:
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.isDesc
+              : false
+        },
         userId:
           this.bulletinAuthor.current.value === "Все"
             ? ""
@@ -75,12 +88,12 @@ class Header extends React.Component<IMapStateToProps & IMapDispatchToProps> {
         sortParams: [
           {
             fieldName:
-              this.props.filterParams.sortParams !== undefined
-                ? this.props.filterParams.sortParams[0].fieldName
+              this.props.filterParams.sortParam !== undefined
+                ? this.props.filterParams.sortParam.fieldName
                 : "Number",
             isDesc:
-              this.props.filterParams.sortParams !== undefined
-                ? this.props.filterParams.sortParams[0].isDesc
+              this.props.filterParams.sortParam !== undefined
+                ? this.props.filterParams.sortParam.isDesc
                 : false
           }
         ],
@@ -111,23 +124,22 @@ class Header extends React.Component<IMapStateToProps & IMapDispatchToProps> {
 
     return (
       <div>
-        <div className="d-flex p-2 fixed-top justify-content-around align-items-start">
+        <div className="d-flex p-2 fixed-top justify-content-around align-items-start header">
           <div className="m-3">
             <Alert stack={{ limit: 5 }} />
             <button
               type="button"
-              className="btn btn-light"
+              className="btn btn-light header__button"
               onClick={redirectToAddBulletinPage}
             >
               Добавить
             </button>
           </div>
           <div className="m-3">
-            <label className="px-3 lblColor">Пользователь</label>
+            <label className="px-3 header__label_color">Пользователь</label>
             <select
               defaultValue={getUserNameById(this.props.filterParams.userId)}
-              className=""
-              id="size"
+              className="header__select_size"
               ref={this.bulletinAuthor}
               onChange={getByFilter}
             >
@@ -137,20 +149,19 @@ class Header extends React.Component<IMapStateToProps & IMapDispatchToProps> {
               ))}
             </select>
 
-            <label className="px-3 lblColor">От</label>
+            <label className="px-3 header__label_color">От</label>
             <input
               defaultValue={this.props.filterParams.startDate}
-              className=""
-              id="size"
+              className="header__input-date_width"
               type="date"
               ref={this.bulletinDateStart}
               onChange={getByFilter}
             />
 
-            <label className="px-3 lblColor">До</label>
+            <label className="px-3 header__label_color">До</label>
             <input
               defaultValue={this.props.filterParams.endDate}
-              id="size"
+              className="header__input-date_width"
               type="date"
               ref={this.bulletinDateEnd}
               onChange={getByFilter}
@@ -166,7 +177,7 @@ class Header extends React.Component<IMapStateToProps & IMapDispatchToProps> {
               <input
                 defaultValue={this.props.filterParams.searchText}
                 type="text"
-                className="form-control"
+                className="form-control header__search-input"
                 placeholder="Общий поиск"
                 ref={this.searchInput}
                 onChange={debounce(500, getByFilter)}
@@ -197,7 +208,7 @@ export default connect(
       });
       dispatch(fetchBulletinByFilterAction(json));
     },
-    onSetFilterParams: (Params: IFetchBulletinsParams) => {
+    onSetFilterParams: (Params: IFilterParams) => {
       dispatch({ type: "SET_FILTER_PARAMS", params: Params });
     }
   })

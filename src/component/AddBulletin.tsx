@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import {
   IBulletinType,
   IFetchBulletinsParams,
+  IFilterParams,
   IUserType
 } from "../types/types";
 
@@ -13,17 +14,12 @@ interface IMapStateToProps {
   history?: any;
   users: IUserType[];
   pageBulletins: { page: number; pageSize: number };
-  filterParams: IFetchBulletinsParams;
+  filterParams: IFilterParams;
 }
 
 interface IMapDispatchToProps {
   onFetchUsers: () => void;
-  onAddBulletin: (bulletin: IBulletinType, json: any) => void;
-  onBulletinByIdForUpdate: (id: string) => void;
-  onAddBulletinIdForDelete: (id: string) => void;
-  onDelBulletinIdForDelete: (id: string) => void;
-  onClearBulletinIdForDelete: () => void;
-  onBulletinDelete: (idArr: string[]) => void;
+  onAddBulletin: (bulletin: IBulletinType, json: IFetchBulletinsParams) => void;
 }
 
 class AddBulletin extends React.Component<
@@ -65,22 +61,15 @@ class AddBulletin extends React.Component<
         rating: bulletinrating
       };
 
-      const jsonParams = {
+      const jsonParams: IFetchBulletinsParams = {
         pageFilter: {
           page: this.props.pageBulletins.page,
           pageSize: this.props.pageBulletins.pageSize
         },
         sortParams: [
           {
-            fieldName:
-              this.props.filterParams.sortParams !== undefined
-                ? this.props.filterParams.sortParams[0].fieldName
-                : "Number",
-
-            isDesc:
-              this.props.filterParams.sortParams !== undefined
-                ? this.props.filterParams.sortParams[0].isDesc
-                : false
+            fieldName: this.props.filterParams.sortParam.fieldName,
+            isDesc: this.props.filterParams.sortParam.isDesc
           }
         ],
         userId: this.props.filterParams.userId,
@@ -190,7 +179,10 @@ export default connect(
     onFetchUsers: (): void => {
       dispatch(fetchUsers());
     },
-    onAddBulletin: (bulletin: IBulletinType, json: any): void => {
+    onAddBulletin: (
+      bulletin: IBulletinType,
+      json: IFetchBulletinsParams
+    ): void => {
       dispatch(addBulletinAction(bulletin, json));
     }
   })

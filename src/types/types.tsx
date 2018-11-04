@@ -34,3 +34,13 @@ export interface IUserType {
   createdUtc: string;
   name: string;
 }
+export interface IFilterParams {
+  sortParam: {
+    fieldName: string;
+    isDesc: boolean;
+  };
+  userId: string;
+  searchText: string;
+  startDate: string;
+  endDate: string;
+}

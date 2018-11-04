@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import {
   IBulletinsType,
   IFetchBulletinsParams,
+  IFilterParams,
   IUserType
 } from "../types/types";
 
@@ -17,13 +18,14 @@ interface IMapStateToProps {
   bulletins: IBulletinsType;
   users: IUserType[];
   pageBulletins: { page: number; pageSize: number };
-  filterParams: IFetchBulletinsParams;
+  filterParams: IFilterParams;
 }
 
 interface IMapDispatchToProps {
   onFetchBulletin: (json: any) => void;
   onBulletinForUpdate: (Bulletin: any) => void;
   onChangePage_Size: (Page: number, PageSize: number, json: any) => void;
+  onSetFilterParams: (Params: IFilterParams) => void;
 }
 
 class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
@@ -61,8 +63,12 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
         setFetchBulletinsParams(
           this.props.pageBulletins.page,
           this.props.pageBulletins.pageSize,
-          "number",
-          false
+          this.props.filterParams.sortParam !== undefined
+            ? this.props.filterParams.sortParam.fieldName
+            : "Number",
+          this.props.filterParams.sortParam !== undefined
+            ? this.props.filterParams.sortParam.isDesc
+            : false
         )
       );
     }
@@ -82,7 +88,7 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
         this.props.history.push("/updtaebulletin");
       }
     };
-    const changePageSize = (e: any) => {
+    const changePageSize = () => {
       if (this.selectPageSize.current.value === "Все") {
         this.props.onChangePage_Size(
           1,
@@ -90,11 +96,11 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             1,
             this.props.bulletins.count,
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].fieldName
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.fieldName
               : "Number",
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].isDesc
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.isDesc
               : false
           )
         );
@@ -105,11 +111,11 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             1,
             this.selectPageSize.current.value,
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].fieldName
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.fieldName
               : "Number",
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].isDesc
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.isDesc
               : false
           )
         );
@@ -123,11 +129,11 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             this.props.pageBulletins.page - 1,
             this.props.pageBulletins.pageSize,
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].fieldName
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.fieldName
               : "Number",
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].isDesc
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.isDesc
               : false
           )
         );
@@ -138,11 +144,11 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             this.props.pageBulletins.page + 1,
             this.props.pageBulletins.pageSize,
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].fieldName
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.fieldName
               : "Number",
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].isDesc
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.isDesc
               : false
           )
         );
@@ -153,11 +159,11 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             e.target.text,
             this.props.pageBulletins.pageSize,
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].fieldName
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.fieldName
               : "Number",
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].isDesc
+            this.props.filterParams.sortParam !== undefined
+              ? this.props.filterParams.sortParam.isDesc
               : false
           )
         );
@@ -228,33 +234,112 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
       </div>
     );
 
+    const sortIcon = (type: string) => {
+      switch (type) {
+        case "NumberSortIcon":
+          if (this.props.filterParams.sortParam.fieldName === "Number") {
+            if (this.props.filterParams.sortParam.isDesc) {
+              return <i className="fa fa-sort-up float-right" />;
+            } else {
+              return <i className="fa fa-sort-down float-right" />;
+            }
+          } else {
+            return <i className="fa fa-sort float-right" />;
+          }
+        case "CreatedSortIcon":
+          if (this.props.filterParams.sortParam.fieldName === "Created") {
+            if (this.props.filterParams.sortParam.isDesc) {
+              return <i className="fa fa-sort-up float-right" />;
+            } else {
+              return <i className="fa fa-sort-down float-right" />;
+            }
+          } else {
+            return <i className="fa fa-sort float-right" />;
+          }
+        case "ContentSortIcon":
+          if (this.props.filterParams.sortParam.fieldName === "Content") {
+            if (this.props.filterParams.sortParam.isDesc) {
+              return <i className="fa fa-sort-up float-right" />;
+            } else {
+              return <i className="fa fa-sort-down float-right" />;
+            }
+          } else {
+            return <i className="fa fa-sort float-right" />;
+          }
+        case "RatingSortIcon":
+          if (this.props.filterParams.sortParam.fieldName === "Rating") {
+            if (this.props.filterParams.sortParam.isDesc) {
+              return <i className="fa fa-sort-up float-right" />;
+            } else {
+              return <i className="fa fa-sort-down float-right" />;
+            }
+          } else {
+            return <i className="fa fa-sort float-right" />;
+          }
+        case "UserSortIcon":
+          if (this.props.filterParams.sortParam.fieldName === "User") {
+            if (this.props.filterParams.sortParam.isDesc) {
+              return <i className="fa fa-sort-up float-right" />;
+            } else {
+              return <i className="fa fa-sort-down float-right" />;
+            }
+          } else {
+            return <i className="fa fa-sort float-right" />;
+          }
+
+        default:
+          return <i className="fa fa-sort float-right" />;
+      }
+    };
+    const setSortState = (e: any) => {
+      const param = {
+        sortParam: {
+          fieldName: e.target.getAttribute("data-item"),
+          isDesc: !this.props.filterParams.sortParam.isDesc
+        },
+        userId: this.props.filterParams.userId,
+        searchText: this.props.filterParams.searchText,
+        startDate: this.props.filterParams.startDate,
+        endDate: this.props.filterParams.endDate
+      };
+      this.props.onFetchBulletin(
+        setFetchBulletinsParams(
+          this.props.pageBulletins.page,
+          this.props.pageBulletins.pageSize,
+          e.target.getAttribute("data-item"),
+          !this.props.filterParams.sortParam.isDesc
+        )
+      );
+      this.props.onSetFilterParams(param);
+    };
+
     return (
       <div>
         <Header />
 
-        <div className="container-fluid px-0 pt-5 mt-5 color_">
-          <table className="table table-striped">
+        <div className="container-fluid px-0 pt-5 mt-5">
+          <table className="table table-hover table-striped table-borderless">
             <thead>
               <tr>
-                <th scope="col">
+                <th data-item={"Number"} onClick={setSortState} scope="col">
                   Номер
-                  <i className="fa fa-sort float-right" aria-hidden="true" />
+                  {sortIcon("NumberSortIcon")}
                 </th>
-                <th scope="col">
+                <th data-item={"Created"} onClick={setSortState} scope="col">
                   Создано
-                  <i className="fa fa-sort float-right" aria-hidden="true" />
+                  {sortIcon("CreatedSortIcon")}
                 </th>
-                <th scope="col">
+                <th data-item={"Content"} onClick={setSortState} scope="col">
                   Объявление
-                  <i className="fa fa-sort float-right" aria-hidden="true" />
+                  {sortIcon("ContentSortIcon")}
                 </th>
-                <th scope="col">
+                <th data-item={"Rating"} onClick={setSortState} scope="col">
                   Рейтинг
-                  <i className="fa fa-sort float-right" aria-hidden="true" />
+                  {sortIcon("RatingSortIcon")}
                 </th>
-                <th scope="col">
+                <th data-item={"User"} onClick={setSortState} scope="col">
                   Пользователь
-                  <i className="fa fa-sort float-right" aria-hidden="true" />
+                  {sortIcon("UserSortIcon")}
                 </th>
               </tr>
             </thead>
@@ -327,6 +412,9 @@ export default connect(
         pageOrPageSize: { page: Page, pageSize: PageSize }
       });
       dispatch(fetchBulletinByFilterAction(json));
+    },
+    onSetFilterParams: (Params: IFetchBulletinsParams) => {
+      dispatch({ type: "SET_FILTER_PARAMS", params: Params });
     }
   })
 )(App);

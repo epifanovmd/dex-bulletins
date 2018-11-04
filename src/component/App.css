@@ -1,3 +1,45 @@
-tbody tr {
+tbody tr:hover {
   cursor: pointer;
+}
+
+thead th:hover {
+  cursor: pointer;
+  background-color: aquamarine;
+}
+
+.header__input-date_width,
+.header__select_size {
+  width: 150px;
+}
+
+.header {
+  background: darkslategray;
+}
+.header__label_color {
+  color: white;
+}
+
+/* Removes the spin button */
+input[type="date"]::-webkit-inner-spin-button {
+  display: none;
+}
+
+/* Always display the drop down caret */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color: #2c3e50;
+}
+
+/* A few custom styles for date inputs */
+input[type="date"] {
+  border: 1px solid #ecf0f1;
+  border-radius: 5px;
+  background: #ecf0f1;
+  padding: 4px;
+  display: inline-block !important;
+  visibility: visible !important;
+}
+select {
+  border: 1px solid #ecf0f1;
+  border-radius: 5px;
+  padding: 4px;
 }

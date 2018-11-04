@@ -1,4 +1,6 @@
-const initialState: any = {
+import { IFilterParams } from "./../types/types";
+
+const initialState: IFilterParams = {
   sortParam: {
     fieldName: "Number",
     isDesc: false

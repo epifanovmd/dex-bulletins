@@ -1,6 +1,11 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { IBulletinType, IUserType } from "../types/types";
+import {
+  IBulletinType,
+  IFetchBulletinsParams,
+  IFilterParams,
+  IUserType
+} from "../types/types";
 
 import { updateBulletinAction } from "./../actions/updateBulletinAction";
 import { deleteBuleetinByIdAction } from "./../actions/deleteBuleetinsByIdAction";
@@ -12,12 +17,15 @@ interface IMapStateToProps {
   bulletinIdForUpdate: string;
   pageBulletins: { page: number; pageSize: number };
 
-  filterParams: any;
+  filterParams: IFilterParams;
 }
 
 interface IMapDispatchToProps {
-  onUpdateBulletin: (bulletin: IBulletinType, json: any) => void;
-  onDeleteBulletin: (id: string, json: any) => void;
+  onUpdateBulletin: (
+    bulletin: IBulletinType,
+    json: IFetchBulletinsParams
+  ) => void;
+  onDeleteBulletin: (id: string, json: IFetchBulletinsParams) => void;
 }
 
 class UpdateBulletin extends React.Component<
@@ -50,22 +58,15 @@ class UpdateBulletin extends React.Component<
   }
 
   public render() {
-    const jsonParams = {
+    const jsonParams: IFetchBulletinsParams = {
       pageFilter: {
         page: this.props.pageBulletins.page,
         pageSize: this.props.pageBulletins.pageSize
       },
       sortParams: [
         {
-          fieldName:
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].fieldName
-              : "Number",
-
-          isDesc:
-            this.props.filterParams.sortParams !== undefined
-              ? this.props.filterParams.sortParams[0].isDesc
-              : false
+          fieldName: this.props.filterParams.sortParam.fieldName,
+          isDesc: this.props.filterParams.sortParam.isDesc
         }
       ],
       userId: this.props.filterParams.userId,
@@ -217,11 +218,14 @@ export default connect(
     filterParams: state.filterParams
   }),
   dispatch => ({
-    onUpdateBulletin: (bulletin: IBulletinType, json: any): void => {
+    onUpdateBulletin: (
+      bulletin: IBulletinType,
+      json: IFetchBulletinsParams
+    ): void => {
       dispatch(updateBulletinAction(bulletin, json));
       dispatch({ type: "CLEAR_BULLETIN_FOR_UPDATE", bulletin });
     },
-    onDeleteBulletin: (id: string, json: any) => {
+    onDeleteBulletin: (id: string, json: IFetchBulletinsParams) => {
       dispatch(deleteBuleetinByIdAction(id, json));
     }
   })
