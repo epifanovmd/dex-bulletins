@@ -56,14 +56,8 @@ class Header extends React.Component<IMapStateToProps & IMapDispatchToProps> {
     const getByFilter = () => {
       const param = {
         sortParam: {
-          fieldName:
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.fieldName
-              : "Number",
-          isDesc:
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.isDesc
-              : false
+          fieldName: this.props.filterParams.sortParam.fieldName,
+          isDesc: this.props.filterParams.sortParam.isDesc
         },
         userId:
           this.bulletinAuthor.current.value === "Все"
@@ -87,14 +81,8 @@ class Header extends React.Component<IMapStateToProps & IMapDispatchToProps> {
         },
         sortParams: [
           {
-            fieldName:
-              this.props.filterParams.sortParam !== undefined
-                ? this.props.filterParams.sortParam.fieldName
-                : "Number",
-            isDesc:
-              this.props.filterParams.sortParam !== undefined
-                ? this.props.filterParams.sortParam.isDesc
-                : false
+            fieldName: this.props.filterParams.sortParam.fieldName,
+            isDesc: this.props.filterParams.sortParam.isDesc
           }
         ],
         userId: param.userId,

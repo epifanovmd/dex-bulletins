@@ -96,12 +96,9 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             1,
             this.props.bulletins.count,
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.fieldName
-              : "Number",
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.isDesc
-              : false
+
+            this.props.filterParams.sortParam.fieldName,
+            this.props.filterParams.sortParam.isDesc
           )
         );
       } else {
@@ -111,12 +108,8 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             1,
             this.selectPageSize.current.value,
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.fieldName
-              : "Number",
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.isDesc
-              : false
+            this.props.filterParams.sortParam.fieldName,
+            this.props.filterParams.sortParam.isDesc
           )
         );
       }
@@ -129,12 +122,8 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             this.props.pageBulletins.page - 1,
             this.props.pageBulletins.pageSize,
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.fieldName
-              : "Number",
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.isDesc
-              : false
+            this.props.filterParams.sortParam.fieldName,
+            this.props.filterParams.sortParam.isDesc
           )
         );
       } else if (String(e.target.text) === ">>") {
@@ -144,12 +133,8 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             this.props.pageBulletins.page + 1,
             this.props.pageBulletins.pageSize,
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.fieldName
-              : "Number",
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.isDesc
-              : false
+            this.props.filterParams.sortParam.fieldName,
+            this.props.filterParams.sortParam.isDesc
           )
         );
       } else {
@@ -159,12 +144,8 @@ class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
           setFetchBulletinsParams(
             e.target.text,
             this.props.pageBulletins.pageSize,
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.fieldName
-              : "Number",
-            this.props.filterParams.sortParam !== undefined
-              ? this.props.filterParams.sortParam.isDesc
-              : false
+            this.props.filterParams.sortParam.fieldName,
+            this.props.filterParams.sortParam.isDesc
           )
         );
       }
