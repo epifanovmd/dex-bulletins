@@ -35,7 +35,7 @@ interface IMapDispatchToProps {
   onSetFilterParams: (Params: IFilterParams) => void;
 }
 
-class Header extends React.Component<IMapStateToProps & IMapDispatchToProps> {
+class Header extends React.PureComponent<IMapStateToProps & IMapDispatchToProps> {
   private bulletinDateStart: any = React.createRef();
   private bulletinDateEnd: any = React.createRef();
   private bulletinAuthor: any = React.createRef();

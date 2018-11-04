@@ -22,7 +22,7 @@ interface IMapDispatchToProps {
   onAddBulletin: (bulletin: IBulletinType, json: IFetchBulletinsParams) => void;
 }
 
-class AddBulletin extends React.Component<
+class AddBulletin extends React.PureComponent<
   IMapStateToProps & IMapDispatchToProps
 > {
   private bulletinNumber: any = React.createRef();

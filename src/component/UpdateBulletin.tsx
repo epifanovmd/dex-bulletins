@@ -28,7 +28,7 @@ interface IMapDispatchToProps {
   onDeleteBulletin: (id: string, json: IFetchBulletinsParams) => void;
 }
 
-class UpdateBulletin extends React.Component<
+class UpdateBulletin extends React.PureComponent<
   IMapStateToProps & IMapDispatchToProps
 > {
   private bulletinNumber: any = React.createRef();

@@ -28,7 +28,7 @@ interface IMapDispatchToProps {
   onSetFilterParams: (Params: IFilterParams) => void;
 }
 
-class App extends React.Component<IMapStateToProps & IMapDispatchToProps> {
+class App extends React.PureComponent<IMapStateToProps & IMapDispatchToProps> {
   private selectPageSize: any = React.createRef();
 
   public render() {
