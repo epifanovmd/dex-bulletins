@@ -1,12 +1,15 @@
 import Alert from "react-s-alert";
 import { IBulletinType, IFetchBulletinsParams } from "../types/types";
-
 import { fetchBulletinByFilterAction } from "./fetchBulletinByFilterAction";
+import { Dispatch  } from "redux";
+
+
+
 
 export const addBulletinAction = (
   bulletin: IBulletinType,
   json: IFetchBulletinsParams
-): any => (dispatch: any) => {
+): any  => (dispatch: Dispatch): any => {
   console.info("Добавение в API", bulletin);
   fetch("http://ci2.dextechnology.com:8000/api/Bulletin/Add", {
     method: "POST",

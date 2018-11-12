@@ -10,8 +10,8 @@ import {
 import "./App.css";
 
 import Header from "./Header";
-import { fetchUsers } from "./../actions/fetchUsersAction";
-import { fetchBulletinByFilterAction } from "./../actions/fetchBulletinByFilterAction";
+import { fetchUsers } from "../actions/fetchUsersAction";
+import { fetchBulletinByFilterAction } from "../actions/fetchBulletinByFilterAction";
 
 interface IMapStateToProps {
   history?: any;

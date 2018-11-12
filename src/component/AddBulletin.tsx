@@ -182,7 +182,7 @@ export default connect(
     onAddBulletin: (
       bulletin: IBulletinType,
       json: IFetchBulletinsParams
-    ): void => {
+    ): any => {
       dispatch(addBulletinAction(bulletin, json));
     }
   })
